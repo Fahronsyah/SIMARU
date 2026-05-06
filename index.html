@@ -1,615 +1,2535 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIMARU - Sistem Manajemen Arsip Rumah Sakit</title>
-  <style>
-    :root {
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      --font-mono: "Courier New", monospace;
-      --border-radius-lg: 8px;
-      --border-radius-md: 6px;
-      --color-text-primary: #1a3a5c;
-      --color-text-secondary: #64748b;
-    }
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: var(--font-sans);
+    background: #eef2f7;
+  }
+  .wrap {
+    padding: 1.25rem;
+  }
+  .header {
+    background: #1a3a5c;
+    border-radius: var(--border-radius-lg);
+    padding: 0;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+  }
+  .hstripe {
+    width: 6px;
+    background: #d4af37;
+    flex-shrink: 0;
+  }
+  .hbody {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.5rem;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-right: 1rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+  }
+  .logo-emblem {
+    width: 46px;
+    height: 46px;
+  }
+  .ltxt {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .ltxt .l1 {
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .ltxt .l2 {
+    font-size: 11px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.35;
+  }
+  .htitle {
+    padding-left: 0.75rem;
+    flex: 1;
+  }
+  .htitle h1 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #d4af37;
+    letter-spacing: 0.02em;
+  }
+  .htitle p {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 2px;
+  }
+  .hdate {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .hdate .d1 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #d4af37;
+  }
+  .hdate .d2 {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 2px;
+  }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: var(--font-sans);
-      background: #eef2f7;
-    }
-    
-    .wrap {
-      padding: 1.25rem;
-    }
-    
-    .header {
-      background: #1a3a5c;
-      border-radius: var(--border-radius-lg);
-      padding: 0;
-      margin-bottom: 1.25rem;
-      overflow: hidden;
-      display: flex;
-      align-items: stretch;
-    }
-    
-    .hstripe {
-      width: 6px;
-      background: #d4af37;
-      flex-shrink: 0;
-    }
-    
-    .hbody {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.1rem 1.5rem;
-      flex: 1;
-      flex-wrap: wrap;
-    }
-    
-    .logo-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-right: 1rem;
-      border-right: 1px solid rgba(255, 255, 255, 0.15);
-      flex-shrink: 0;
-    }
-    
-    .logo-emblem {
-      width: 46px;
-      height: 46px;
-    }
-    
-    .ltxt {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-    
-    .ltxt .l1 {
-      font-size: 9px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.55);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    
-    .ltxt .l2 {
-      font-size: 11px;
-      font-weight: 500;
-      color: #fff;
-      line-height: 1.35;
-    }
-    
-    .htitle {
-      padding-left: 0.75rem;
-      flex: 1;
-    }
-    
-    .htitle h1 {
-      font-size: 20px;
-      font-weight: 500;
-      color: #d4af37;
-      letter-spacing: 0.02em;
-    }
-    
-    .htitle p {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.65);
-      margin-top: 2px;
-    }
-    
-    .hdate {
-      text-align: right;
-      flex-shrink: 0;
-    }
-    
-    .hdate .d1 {
-      font-size: 16px;
-      font-weight: 500;
-      color: #d4af37;
-    }
-    
-    .hdate .d2 {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.6);
-      margin-top: 2px;
-    }
+  .notif {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: #fff8e6;
+    border: 0.5px solid #e6c96c;
+    border-radius: var(--border-radius-md);
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 12px;
+    color: #7a5900;
+  }
+  .notif.show {
+    display: flex;
+  }
+  .notif svg {
+    width: 15px;
+    height: 15px;
+    fill: #c9930a;
+    flex-shrink: 0;
+  }
 
-    .notif {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      background: #fff8e6;
-      border: 0.5px solid #e6c96c;
-      border-radius: var(--border-radius-md);
-      padding: 0.65rem 1rem;
-      margin-bottom: 1.25rem;
-      font-size: 12px;
-      color: #7a5900;
-    }
-    
-    .notif.show {
-      display: flex;
-    }
-    
-    .notif svg {
-      width: 15px;
-      height: 15px;
-      fill: #c9930a;
-      flex-shrink: 0;
-    }
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .kpi {
+    background: #fff;
+    border: 0.5px solid #dde3ed;
+    border-radius: var(--border-radius-md);
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+  }
+  .kpi.kb::before {
+    background: #185fa5;
+  }
+  .kpi.kn::before {
+    background: #1a3a5c;
+  }
+  .kpi.kg::before {
+    background: #0f6e56;
+  }
+  .kpi.kr::before {
+    background: #a32d2d;
+  }
+  .kpi-ico {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .kpi-ico svg {
+    width: 17px;
+    height: 17px;
+  }
+  .kb .kpi-ico {
+    background: #e6f1fb;
+  }
+  .kb .kpi-ico svg {
+    fill: #185fa5;
+  }
+  .kn .kpi-ico {
+    background: #e8edf4;
+  }
+  .kn .kpi-ico svg {
+    fill: #1a3a5c;
+  }
+  .kg .kpi-ico {
+    background: #eaf3de;
+  }
+  .kg .kpi-ico svg {
+    fill: #3b6d11;
+  }
+  .kr .kpi-ico {
+    background: #fcebeb;
+  }
+  .kr .kpi-ico svg {
+    fill: #a32d2d;
+  }
+  .kpi-lbl {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 2px;
+  }
+  .kpi-val {
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .kb .kpi-val {
+    color: #185fa5;
+  }
+  .kn .kpi-val {
+    color: #1a3a5c;
+  }
+  .kg .kpi-val {
+    color: #0f6e56;
+  }
+  .kr .kpi-val {
+    color: #a32d2d;
+  }
 
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 1.25rem;
-    }
-    
-    .kpi {
-      background: #fff;
-      border: 0.5px solid #dde3ed;
-      border-radius: var(--border-radius-md);
-      padding: 0.85rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .kpi::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-    }
-    
-    .kpi.kb::before {
-      background: #185fa5;
-    }
-    
-    .kpi.kn::before {
-      background: #1a3a5c;
-    }
-    
-    .kpi.kg::before {
-      background: #0f6e56;
-    }
-    
-    .kpi.kr::before {
-      background: #a32d2d;
-    }
-    
-    .kpi-ico {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--border-radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    
-    .kpi-ico svg {
-      width: 17px;
-      height: 17px;
-    }
-    
-    .kb .kpi-ico {
-      background: #e6f1fb;
-    }
-    
-    .kb .kpi-ico svg {
-      fill: #185fa5;
-    }
-    
-    .kn .kpi-ico {
-      background: #e8edf4;
-    }
-    
-    .kn .kpi-ico svg {
-      fill: #1a3a5c;
-    }
-    
-    .kg .kpi-ico {
-      background: #eaf3de;
-    }
-    
-    .kg .kpi-ico svg {
-      fill: #3b6d11;
-    }
-    
-    .kr .kpi-ico {
-      background: #fcebeb;
-    }
-    
-    .kr .kpi-ico svg {
-      fill: #a32d2d;
-    }
-    
-    .kpi-lbl {
-      font-size: 11px;
-      color: var(--color-text-secondary);
-      margin-bottom: 2px;
-    }
-    
-    .kpi-val {
-      font-size: 22px;
-      font-weight: 500;
-    }
-    
-    .kb .kpi-val {
-      color: #185fa5;
-    }
-    
-    .kn .kpi-val {
-      color: #1a3a5c;
-    }
-    
-    .kg .kpi-val {
-      color: #0f6e56;
-    }
-    
-    .kr .kpi-val {
-      color: #a32d2d;
-    }
+  .tabs {
+    display: flex;
+    background: #fff;
+    border: 0.5px solid #dde3ed;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+  .tbtn {
+    flex: 1;
+    padding: 9px 6px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.15s;
+  }
+  .tbtn svg {
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+  }
+  .tbtn:hover {
+    background: #f5f7fb;
+    color: #1a3a5c;
+  }
+  .tbtn.on {
+    color: #1a3a5c;
+    border-bottom-color: #d4af37;
+    background: #f0f4f9;
+  }
+  .tab-panel {
+    display: none;
+  }
+  .tab-panel.on {
+    display: block;
+  }
 
-    .tabs {
-      display: flex;
-      background: #fff;
-      border: 0.5px solid #dde3ed;
-      border-radius: var(--border-radius-lg);
-      overflow: hidden;
-      margin-bottom: 1.25rem;
-    }
-    
-    .tbtn {
-      flex: 1;
-      padding: 9px 6px;
-      border: none;
-      background: transparent;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      transition: all 0.15s;
-    }
-    
-    .tbtn svg {
-      width: 13px;
-      height: 13px;
-      fill: currentColor;
-    }
-    
-    .tbtn:hover {
-      background: #f5f7fb;
-      color: #1a3a5c;
-    }
-    
-    .tbtn.on {
-      color: #1a3a5c;
-      border-bottom-color: #d4af37;
-      background: #f0f4f9;
-    }
-    
-    .tab-panel {
-      display: none;
-    }
-    
-    .tab-panel.on {
-      display: block;
-    }
+  .scard {
+    background: #fff;
+    border: 0.5px solid #dde3ed;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .shead {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 0.5px solid #eef0f4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .shead-l {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .shead h2 {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .shi {
+    width: 26px;
+    height: 26px;
+    background: #e8edf4;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .shi svg {
+    width: 13px;
+    height: 13px;
+    fill: #1a3a5c;
+  }
+  .shead-r {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
 
-    .scard {
-      background: #fff;
-      border: 0.5px solid #dde3ed;
-      border-radius: var(--border-radius-lg);
-      margin-bottom: 1.25rem;
-      overflow: hidden;
-    }
-    
-    .shead {
-      padding: 0.85rem 1.25rem;
-      border-bottom: 0.5px solid #eef0f4;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    
-    .shead-l {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .shead h2 {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-primary);
-    }
-    
-    .shi {
-      width: 26px;
-      height: 26px;
-      background: #e8edf4;
-      border-radius: var(--border-radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .shi svg {
-      width: 13px;
-      height: 13px;
-      fill: #1a3a5c;
-    }
-    
-    .shead-r {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+  /* JENIS ARSIP PICKER */
+  .jenis-arsip-picker {
+    display: flex;
+    gap: 12px;
+    padding: 1.25rem 1.25rem 0;
+  }
+  .jap-card {
+    flex: 1;
+    border: 0.5px solid #cdd4e0;
+    border-radius: var(--border-radius-lg);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+  .jap-card:hover {
+    border-color: #2563a8;
+    background: #f5f8ff;
+  }
+  .jap-card.selected {
+    border-color: #1a3a5c;
+    background: #f0f4f9;
+    border-width: 1.5px;
+  }
+  .jap-ico {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .jap-ico svg {
+    width: 20px;
+    height: 20px;
+  }
+  .jap-card.selected .jap-ico {
+    background: #1a3a5c;
+  }
+  .jap-card:not(.selected) .jap-ico {
+    background: #e8edf4;
+  }
+  .jap-card.selected .jap-ico svg {
+    fill: #fff;
+  }
+  .jap-card:not(.selected) .jap-ico svg {
+    fill: #4a6080;
+  }
+  .jap-info h3 {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+  }
+  .jap-info p {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+  .jap-radio {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid #cdd4e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .jap-card.selected .jap-radio {
+    border-color: #1a3a5c;
+    background: #1a3a5c;
+  }
+  .jap-card.selected .jap-radio::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .jap-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1.25rem 0;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+  .jap-divider::before,
+  .jap-divider::after {
+    content: "";
+    flex: 1;
+    height: 0.5px;
+    background: #eef0f4;
+  }
 
-    .fgrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
-      padding: 1.25rem;
-    }
-    
-    .fg label {
-      display: block;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 4px;
-    }
-    
-    .fg input,
-    .fg select,
-    .fg textarea {
-      width: 100%;
-      padding: 7px 11px;
-      border: 0.5px solid #cdd4e0;
-      border-radius: var(--border-radius-md);
-      font-size: 13px;
-      background: #fff;
-      color: var(--color-text-primary);
-    }
-    
-    .fg input:focus,
-    .fg select:focus,
-    .fg textarea:focus {
-      outline: none;
-      border-color: #2563a8;
-      box-shadow: 0 0 0 3px rgba(37, 99, 168, 0.1);
-    }
-    
-    .fg textarea {
-      resize: vertical;
-      min-height: 52px;
-    }
-    
-    .fg.full {
-      grid-column: 1/-1;
-    }
-    
-    .btn-sub {
-      padding: 8px 20px;
-      background: #1a3a5c;
-      color: #fff;
-      border: none;
-      border-radius: var(--border-radius-md);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .btn-sub:hover {
-      background: #2563a8;
-    }
-    
-    .btn-sec {
-      padding: 8px 13px;
-      background: transparent;
-      color: var(--color-text-secondary);
-      border: 0.5px solid #cdd4e0;
-      border-radius: var(--border-radius-md);
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    
-    .btn-sec:hover {
-      background: #f4f6fa;
-    }
-    
-    .table-wrapper {
-      overflow-x: auto;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      min-width: 1100px;
-    }
-    
-    thead tr {
-      background: #f5f7fb;
-    }
-    
-    thead th {
-      padding: 9px 11px;
-      text-align: left;
-      font-size: 10px;
-      font-weight: 600;
-      color: #4a6080;
-      border-bottom: 0.5px solid #dde3ed;
-      white-space: nowrap;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      cursor: pointer;
-      user-select: none;
-    }
-    
-    thead th:hover {
-      background: #edf1f7;
-    }
-    
-    tbody tr {
-      border-bottom: 0.5px solid #eef0f4;
-      transition: background 0.12s;
-    }
-    
-    tbody tr:last-child {
-      border-bottom: none;
-    }
-    
-    tbody tr:hover {
-      background: #f9fafc;
-    }
-    
-    td {
-      padding: 10px 11px;
-      vertical-align: middle;
-      color: var(--color-text-primary);
-    }
-    
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    
-    .b-pinjam {
-      background: #e6f1fb;
-      color: #0c447c;
-    }
-    
-    .b-kembali {
-      background: #eaf3de;
-      color: #27500a;
-    }
-    
-    .empty {
-      text-align: center;
-      padding: 2.5rem 1rem;
-      color: var(--color-text-secondary);
-      font-size: 13px;
-    }
-  </style>
-</head>
-<body>
+  .fgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 1.25rem;
+  }
+  .fg label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .fg input,
+  .fg select,
+  .fg textarea {
+    width: 100%;
+    padding: 7px 11px;
+    border: 0.5px solid #cdd4e0;
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    background: #fff;
+    color: var(--color-text-primary);
+  }
+  .fg input:focus,
+  .fg select:focus,
+  .fg textarea:focus {
+    outline: none;
+    border-color: #2563a8;
+    box-shadow: 0 0 0 3px rgba(37, 99, 168, 0.1);
+  }
+  .fg textarea {
+    resize: vertical;
+    min-height: 52px;
+  }
+  .fg.full {
+    grid-column: 1/-1;
+  }
+  .fact {
+    padding: 0 1.25rem 1.25rem;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .btn-sub {
+    padding: 8px 20px;
+    background: #1a3a5c;
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-sub:hover {
+    background: #2563a8;
+  }
+  .btn-sub svg {
+    width: 13px;
+    height: 13px;
+    fill: #fff;
+  }
+  .btn-sec {
+    padding: 8px 13px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 0.5px solid #cdd4e0;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-sec:hover {
+    background: #f4f6fa;
+  }
+  .btn-sec svg {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+  }
+  .btn-dng {
+    padding: 7px 12px;
+    background: transparent;
+    color: #a32d2d;
+    border: 0.5px solid #f09595;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn-dng:hover {
+    background: #fcebeb;
+  }
+
+  /* WARKAH FIELDS INDICATOR */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #e8edf4;
+    color: #1a3a5c;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 1.25rem 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .section-label svg {
+    width: 11px;
+    height: 11px;
+    fill: #1a3a5c;
+  }
+
+  .sw {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .sb {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .sb svg {
+    position: absolute;
+    left: 9px;
+    width: 13px;
+    height: 13px;
+    fill: #94a3b8;
+    pointer-events: none;
+  }
+  .sb input {
+    padding: 7px 11px 7px 28px;
+    border: 0.5px solid #cdd4e0;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    background: #fff;
+    color: var(--color-text-primary);
+    width: 185px;
+  }
+  .sb input:focus {
+    outline: none;
+    border-color: #2563a8;
+  }
+  .fsel {
+    padding: 7px 9px;
+    border: 0.5px solid #cdd4e0;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    background: #fff;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+
+  .tw {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 1100px;
+  }
+  thead tr {
+    background: #f5f7fb;
+  }
+  thead th {
+    padding: 9px 11px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    color: #4a6080;
+    border-bottom: 0.5px solid #dde3ed;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+  }
+  thead th:hover {
+    background: #edf1f7;
+  }
+  thead th span.arr {
+    margin-left: 3px;
+    opacity: 0.35;
+  }
+  thead th.asc span.arr::after {
+    content: "↑";
+    opacity: 1;
+  }
+  thead th.desc span.arr::after {
+    content: "↓";
+    opacity: 1;
+  }
+  tbody tr {
+    border-bottom: 0.5px solid #eef0f4;
+    transition: background 0.12s;
+  }
+  tbody tr:last-child {
+    border-bottom: none;
+  }
+  tbody tr:hover {
+    background: #f9fafc;
+  }
+  td {
+    padding: 10px 11px;
+    vertical-align: middle;
+    color: var(--color-text-primary);
+  }
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: #f1f3f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #2a4a6a;
+    display: inline-block;
+    border: 0.5px solid #dde3ed;
+  }
+  .dcell {
+    font-size: 12px;
+  }
+  .dsub {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    margin-top: 1px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .b-pinjam {
+    background: #e6f1fb;
+    color: #0c447c;
+  }
+  .b-kembali {
+    background: #eaf3de;
+    color: #27500a;
+  }
+  .b-telat {
+    background: #fcebeb;
+    color: #791f1f;
+  }
+  .b-tepat {
+    background: #eaf3de;
+    color: #27500a;
+  }
+  .b-warn {
+    background: #faeeda;
+    color: #633806;
+  }
+  .b-sisa {
+    background: #e8edf4;
+    color: #1a3a5c;
+  }
+  .b-hm {
+    background: #eeedfe;
+    color: #3c3489;
+  }
+  .b-hgb {
+    background: #e1f5ee;
+    color: #085041;
+  }
+  .b-hp {
+    background: #faeeda;
+    color: #633806;
+  }
+  .b-hgu {
+    background: #faece7;
+    color: #712b13;
+  }
+  .b-hpl {
+    background: #fbeaf0;
+    color: #72243e;
+  }
+  .b-hmsrs {
+    background: #e6f6ff;
+    color: #0b4c72;
+  }
+  .b-hw {
+    background: #f5ffe6;
+    color: #2d5a0a;
+  }
+  .b-warkah {
+    background: #fdf4dc;
+    color: #5a3e00;
+  }
+  .b-sert {
+    background: #e8edf4;
+    color: #1a3a5c;
+  }
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .dg {
+    background: #3b6d11;
+  }
+  .dr {
+    background: #e24b4a;
+  }
+  .db {
+    background: #2563a8;
+  }
+
+  .act-btns {
+    display: flex;
+    gap: 3px;
+    flex-wrap: nowrap;
+  }
+  .ab {
+    padding: 4px 9px;
+    border-radius: var(--border-radius-md);
+    font-size: 11px;
+    cursor: pointer;
+    border: 0.5px solid transparent;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+  }
+  .ab svg {
+    width: 11px;
+    height: 11px;
+    fill: currentColor;
+  }
+  .ab-k {
+    background: #0f6e56;
+    color: #fff;
+    border-color: #0f6e56;
+  }
+  .ab-k:hover {
+    background: #1d9e75;
+  }
+  .ab-d {
+    color: #1a3a5c;
+    border-color: #b5d4f4;
+  }
+  .ab-d:hover {
+    background: #e6f1fb;
+  }
+  .ab-e {
+    color: #854f0b;
+    border-color: #f0cf95;
+  }
+  .ab-e:hover {
+    background: #faeeda;
+  }
+  .ab-h {
+    color: #a32d2d;
+    border-color: #f09595;
+  }
+  .ab-h:hover {
+    background: #fcebeb;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+  }
+  .empty svg {
+    width: 38px;
+    height: 38px;
+    fill: #cdd4e0;
+    margin: 0 auto 0.6rem;
+    display: block;
+  }
+  .tfoot {
+    padding: 9px 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 0.5px solid #eef0f4;
+    background: #fafbfd;
+  }
+  .tfoot-info {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+  .pgbtns {
+    display: flex;
+    gap: 3px;
+  }
+  .pgb {
+    padding: 4px 10px;
+    border: 0.5px solid #cdd4e0;
+    border-radius: var(--border-radius-md);
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--color-text-primary);
+  }
+  .pgb:hover {
+    background: #f0f4fa;
+  }
+  .pgb.on {
+    background: #1a3a5c;
+    color: #fff;
+    border-color: #1a3a5c;
+  }
+
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  .cbox {
+    background: #f5f7fb;
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+  }
+  .ctitle {
+    font-size: 10px;
+    font-weight: 600;
+    color: #4a6080;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .brow {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+  }
+  .blbl {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    width: 62px;
+    flex-shrink: 0;
+    text-align: right;
+    line-height: 1.3;
+  }
+  .btrk {
+    flex: 1;
+    background: #e8edf4;
+    border-radius: 3px;
+    height: 16px;
+    overflow: hidden;
+  }
+  .bfill {
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #fff;
+    min-width: 18px;
+  }
+  .leg-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 5px;
+  }
+  .leg-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .log-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 1.25rem;
+    border-bottom: 0.5px solid #eef0f4;
+  }
+  .log-item:last-child {
+    border-bottom: none;
+  }
+  .ldot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .ld-p {
+    background: #2563a8;
+  }
+  .ld-k {
+    background: #0f6e56;
+  }
+  .ld-h {
+    background: #e24b4a;
+  }
+  .ld-e {
+    background: #d4af37;
+  }
+  .lmsg {
+    font-size: 12px;
+    color: var(--color-text-primary);
+  }
+  .ltime {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+  .log-empty {
+    text-align: center;
+    padding: 2rem;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  .mbg {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 30, 50, 0.45);
+    z-index: 300;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 48px;
+  }
+  .mbg.show {
+    display: flex;
+  }
+  .modal {
+    background: #fff;
+    border-radius: var(--border-radius-lg);
+    width: 420px;
+    border: 0.5px solid #cdd4e0;
+    max-height: 84vh;
+    overflow-y: auto;
+  }
+  .modal-hdr {
+    padding: 1rem 1.25rem;
+    border-bottom: 0.5px solid #eef0f4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mhico {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mhico svg {
+    width: 18px;
+    height: 18px;
+  }
+  .mi-g {
+    background: #eaf3de;
+  }
+  .mi-g svg {
+    fill: #3b6d11;
+  }
+  .mi-r {
+    background: #fcebeb;
+  }
+  .mi-r svg {
+    fill: #a32d2d;
+  }
+  .mi-b {
+    background: #e6f1fb;
+  }
+  .mi-b svg {
+    fill: #185fa5;
+  }
+  .mi-a {
+    background: #fdf4dc;
+  }
+  .mi-a svg {
+    fill: #8a6c00;
+  }
+  .modal-hdr h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .modal-body {
+    padding: 1rem 1.25rem;
+  }
+  .modal-body p {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+  .modal-foot {
+    padding: 0.85rem 1.25rem;
+    border-top: 0.5px solid #eef0f4;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .mcancel {
+    padding: 7px 14px;
+    background: transparent;
+    border: 0.5px solid #cdd4e0;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--color-text-primary);
+  }
+  .mok {
+    padding: 7px 16px;
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .mok.g {
+    background: #0f6e56;
+  }
+  .mok.g:hover {
+    background: #1d9e75;
+  }
+  .mok.r {
+    background: #a32d2d;
+  }
+  .mok.r:hover {
+    background: #c04040;
+  }
+  .mok.b {
+    background: #1a3a5c;
+  }
+  .mok.b:hover {
+    background: #2563a8;
+  }
+  .egrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .egrid .fg.full {
+    grid-column: 1/-1;
+  }
+  .det-row {
+    display: flex;
+    padding: 6px 0;
+    border-bottom: 0.5px solid #eef0f4;
+  }
+  .det-row:last-child {
+    border-bottom: none;
+  }
+  .dl {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    width: 130px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .dv {
+    font-size: 12px;
+    color: var(--color-text-primary);
+    flex: 1;
+  }
+
+  .toast {
+    position: absolute;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    background: #102439;
+    color: #fff;
+    padding: 9px 14px;
+    border-radius: var(--border-radius-md);
+    font-size: 12px;
+    z-index: 400;
+    display: none;
+    align-items: center;
+    gap: 7px;
+    border-left: 3px solid #d4af37;
+    max-width: 300px;
+  }
+  .toast.show {
+    display: flex;
+  }
+  .toast svg {
+    width: 13px;
+    height: 13px;
+    fill: #d4af37;
+    flex-shrink: 0;
+  }
+  /* COPYRIGHT */
+  .copyright {
+    background: #12283f;
+    color: #ffffff;
+    text-align: center;
+    padding: 18px 10px;
+    font-size: 13px;
+    border-top: 1px solid #1a3a5c;
+    letter-spacing: 0.5px;
+  }
+</style>
+
+<h2
+  class="sr-only"
+  style="position: absolute; width: 1px; height: 1px; overflow: hidden"
+>
+  SIMARU — Sistem Informasi Manajemen Arsip Terpadu, Kantor Pertanahan Kabupaten
+  Temanggung
+</h2>
+
+<div style="position: relative">
   <div class="wrap">
     <div class="header">
       <div class="hstripe"></div>
       <div class="hbody">
         <div class="logo-wrap">
-          <div class="logo-emblem">
-            <!-- Logo here -->
+          <div class="logo-circle">
+            <img src="asset/Logo_ATR_BPN.png" class="logo-emblem" />
           </div>
           <div class="ltxt">
-            <span class="l1">Rumah Sakit</span>
-            <span class="l2">SIMARU</span>
+            <span class="l1">Kementerian ATR/BPN</span>
+            <span class="l2">Kantor Pertanahan</span>
+            <span class="l2">Kabupaten Temanggung</span>
           </div>
         </div>
         <div class="htitle">
-          <h1>Sistem Manajemen Arsip</h1>
-          <p>Manajemen arsip digital rumah sakit</p>
+          <h1>SIMARU</h1>
+          <p>Sistem Informasi Manajemen Arsip Terpadu</p>
         </div>
         <div class="hdate">
-          <div class="d1" id="current-date">-</div>
-          <div class="d2" id="current-time">-</div>
+          <div class="d1" id="hd-tgl"></div>
+          <div class="d2" id="hd-jam"></div>
         </div>
       </div>
     </div>
 
-    <div class="scard">
-      <div class="shead">
-        <div class="shead-l">
-          <h2>Data Arsip</h2>
+    <div class="notif" id="notif-bar">
+      <svg viewBox="0 0 24 24">
+        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+      </svg>
+      <span id="notif-msg"></span>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi kb">
+        <div class="kpi-ico">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"
+            />
+          </svg>
+        </div>
+        <div>
+          <div class="kpi-lbl">Total Arsip</div>
+          <div class="kpi-val" id="s-total">0</div>
         </div>
       </div>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nomor Dokumen</th>
-              <th>Judul</th>
-              <th>Status</th>
-              <th>Tanggal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>DOC-001</td>
-              <td>Laporan Tahunan</td>
-              <td><span class="badge b-pinjam">Aktif</span></td>
-              <td>2026-05-06</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>DOC-002</td>
-              <td>Rekam Medis</td>
-              <td><span class="badge b-kembali">Selesai</span></td>
-              <td>2026-05-05</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="kpi kn">
+        <div class="kpi-ico">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+            />
+          </svg>
+        </div>
+        <div>
+          <div class="kpi-lbl">Sedang Dipinjam</div>
+          <div class="kpi-val" id="s-pinjam">0</div>
+        </div>
+      </div>
+      <div class="kpi kg">
+        <div class="kpi-ico">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+          </svg>
+        </div>
+        <div>
+          <div class="kpi-lbl">Dikembalikan</div>
+          <div class="kpi-val" id="s-kembali">0</div>
+        </div>
+      </div>
+      <div class="kpi kr">
+        <div class="kpi-ico">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+            />
+          </svg>
+        </div>
+        <div>
+          <div class="kpi-lbl">Terlambat</div>
+          <div class="kpi-val" id="s-telat">0</div>
+        </div>
       </div>
     </div>
 
-    <div class="empty">
-      <p>Konten SIMARU siap digunakan</p>
+    <div class="tabs">
+      <button class="tbtn on" onclick="switchTab('form',this)">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"
+          /></svg
+        >Form Peminjaman
+      </button>
+      <button class="tbtn" onclick="switchTab('data',this)">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+          /></svg
+        >Data Peminjaman
+      </button>
+      <button class="tbtn" onclick="switchTab('chart',this)">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zM16.2 13h2.8v6h-2.8v-6z"
+          /></svg
+        >Statistik
+      </button>
+      <button class="tbtn" onclick="switchTab('log',this)">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
+          /></svg
+        >Riwayat
+      </button>
+    </div>
+
+    <!-- TAB FORM -->
+    <div id="tab-form" class="tab-panel on">
+      <div class="scard">
+        <div class="shead">
+          <div class="shead-l">
+            <div class="shi">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"
+                />
+              </svg>
+            </div>
+            <h2>Form Peminjaman Arsip</h2>
+          </div>
+        </div>
+
+        <!-- PILIHAN JENIS ARSIP -->
+        <div class="jenis-arsip-picker">
+          <div
+            class="jap-card selected"
+            id="jap-sertipikat"
+            onclick="pilihJenisArsip('Sertipikat')"
+          >
+            <div class="jap-ico">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zm-5-3H9v-2h4v2zm2-4H9v-2h6v2z"
+                />
+              </svg>
+            </div>
+            <div class="jap-info">
+              <h3>Sertipikat</h3>
+              <p>Sertipikat Hak atas Tanah (SHM, HGB, HP, HGU, HPL, dll.)</p>
+            </div>
+            <div class="jap-radio"></div>
+          </div>
+          <div
+            class="jap-card"
+            id="jap-warkah"
+            onclick="pilihJenisArsip('Warkah')"
+          >
+            <div class="jap-ico">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"
+                />
+              </svg>
+            </div>
+            <div class="jap-info">
+              <h3>Warkah</h3>
+              <p>Dokumen pendukung / alas hak penerbitan sertipikat</p>
+            </div>
+            <div class="jap-radio"></div>
+          </div>
+        </div>
+
+        <div class="jap-divider">Isi data peminjaman</div>
+
+        <!-- FORM SERTIPIKAT -->
+        <div id="form-sertipikat">
+          <div class="fgrid">
+            <div class="fg">
+              <label>Nama Peminjam <span style="color: #a32d2d">*</span></label
+              ><input
+                type="text"
+                id="f-nama"
+                placeholder="Nama lengkap peminjam"
+              />
+            </div>
+            <div class="fg">
+              <label>No. Sertipikat <span style="color: #a32d2d">*</span></label
+              ><input type="text" id="f-arsip" placeholder="00001" />
+            </div>
+            <div class="fg">
+              <label>Jenis Hak</label>
+              <select id="f-jenis">
+                <option value="">-- Pilih Jenis Hak --</option>
+                <option value="HM">HM — Hak Milik</option>
+                <option value="HGB">HGB — Hak Guna Bangunan</option>
+                <option value="HP">HP — Hak Pakai</option>
+                <option value="HGU">HGU — Hak Guna Usaha</option>
+                <option value="HPL">HPL — Hak Pengelolaan</option>
+                <option value="HMSRS">
+                  HMSRS — Hak Milik Satuan Rumah Susun
+                </option>
+                <option value="HW">HW — Hak Wakaf</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Kecamatan</label
+              ><input
+                type="text"
+                id="f-kecamatan"
+                placeholder="Nama kecamatan"
+              />
+            </div>
+            <div class="fg">
+              <label>Desa / Kelurahan</label
+              ><input
+                type="text"
+                id="f-desa"
+                placeholder="Nama desa / kelurahan"
+              />
+            </div>
+            <div class="fg">
+              <label>Keperluan</label
+              ><input
+                type="text"
+                id="f-keperluan"
+                placeholder="Validasi, Sengketa, Pengukuran..."
+              />
+            </div>
+            <div class="fg">
+              <label>No. Telepon</label
+              ><input type="text" id="f-telp" placeholder="08xx-xxxx-xxxx" />
+            </div>
+            <div class="fg">
+              <label>Petugas Pelayanan</label
+              ><input type="text" id="f-petugas" placeholder="Nama petugas" />
+            </div>
+            <div class="fg">
+              <label>Batas Pengembalian (hari)</label
+              ><input type="number" id="f-batas" value="7" min="1" max="60" />
+            </div>
+            <div class="fg full">
+              <label>Catatan</label
+              ><textarea
+                id="f-catatan"
+                placeholder="Catatan tambahan (opsional)"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM WARKAH -->
+        <div id="form-warkah" style="display: none">
+          <div class="fgrid">
+            <div class="fg">
+              <label>Nama Peminjam <span style="color: #a32d2d">*</span></label
+              ><input
+                type="text"
+                id="w-nama"
+                placeholder="Nama lengkap peminjam"
+              />
+            </div>
+            <div class="fg">
+              <label>No. DI 208 <span style="color: #a32d2d">*</span></label
+              ><input type="text" id="w-nomor" placeholder="Contoh: 00001" />
+            </div>
+            <div class="fg">
+              <label>Jenis Warkah</label>
+              <select id="w-jenis-warkah">
+                <option value="">-- Pilih Jenis --</option>
+                <option value="Girik/Petok D">Girik / Petok D</option>
+                <option value="Letter C">Letter C</option>
+                <option value="AJB">AJB (Akta Jual Beli)</option>
+                <option value="APHB">APHB (Akta Pembagian Hak Bersama)</option>
+                <option value="Akta Hibah">Akta Hibah</option>
+                <option value="Akta Waris">
+                  Akta Waris / Surat Keterangan Waris
+                </option>
+                <option value="SHGB Asli">SHGB Asli</option>
+                <option value="IMB/PBG">IMB / PBG</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Kecamatan</label
+              ><input
+                type="text"
+                id="w-kecamatan"
+                placeholder="Nama kecamatan"
+              />
+            </div>
+            <div class="fg">
+              <label>Desa / Kelurahan</label
+              ><input
+                type="text"
+                id="w-desa"
+                placeholder="Nama desa / kelurahan"
+              />
+            </div>
+            <div class="fg">
+              <label>Tahun Warkah</label
+              ><input type="text" id="w-tahun" placeholder="Contoh: 1985" />
+            </div>
+            <div class="fg">
+              <label>Berkas Terkait (No. BT)</label
+              ><input type="text" id="w-bt" placeholder="M.00001" />
+            </div>
+            <div class="fg">
+              <label>Keperluan</label
+              ><input
+                type="text"
+                id="w-keperluan"
+                placeholder="Penelitian, Sengketa, Pembuktian..."
+              />
+            </div>
+            <div class="fg">
+              <label>No. Telepon</label
+              ><input type="text" id="w-telp" placeholder="08xx-xxxx-xxxx" />
+            </div>
+            <div class="fg">
+              <label>Petugas Pelayanan</label
+              ><input type="text" id="w-petugas" placeholder="Nama petugas" />
+            </div>
+            <div class="fg">
+              <label>Batas Pengembalian (hari)</label
+              ><input type="number" id="w-batas" value="7" min="1" max="60" />
+            </div>
+            <div class="fg full">
+              <label>Catatan</label
+              ><textarea
+                id="w-catatan"
+                placeholder="Catatan tambahan (opsional)"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="fact">
+          <button class="btn-sec" onclick="resetForm()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
+              /></svg
+            >Reset
+          </button>
+          <button class="btn-sub" onclick="pinjam()">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"
+              /></svg
+            >Catat Peminjaman
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB DATA -->
+    <div id="tab-data" class="tab-panel">
+      <div class="scard">
+        <div class="shead">
+          <div class="shead-l">
+            <div class="shi">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+                />
+              </svg>
+            </div>
+            <h2>Daftar Peminjaman Arsip</h2>
+          </div>
+          <div class="shead-r">
+            <div class="sb">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                /></svg
+              ><input
+                type="text"
+                id="cari"
+                placeholder="Cari nama, nomor, desa..."
+                oninput="render()"
+              />
+            </div>
+            <select class="fsel" id="f-jarsip" onchange="render()">
+              <option value="">Semua Jenis Arsip</option>
+              <option value="Sertipikat">Sertipikat</option>
+              <option value="Warkah">Warkah</option>
+            </select>
+            <select class="fsel" id="fjenis" onchange="render()">
+              <option value="">Semua Jenis Hak</option>
+              <option value="HM">HM</option>
+              <option value="HGB">HGB</option>
+              <option value="HP">HP</option>
+              <option value="HGU">HGU</option>
+              <option value="HPL">HPL</option>
+              <option value="HMSRS">HMSRS</option>
+              <option value="HW">HW</option>
+            </select>
+            <select class="fsel" id="fstatus" onchange="render()">
+              <option value="">Semua Status</option>
+              <option value="Dipinjam">Dipinjam</option>
+              <option value="Dikembalikan">Dikembalikan</option>
+            </select>
+            <button class="btn-sec" onclick="exportCSV()">
+              <svg viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg
+              >CSV
+            </button>
+            <button class="btn-sec" onclick="cetakLaporan()">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"
+                /></svg
+              >Cetak
+            </button>
+          </div>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 34px; text-align: center">#</th>
+                <th onclick="sortBy('nama')">
+                  Nama Peminjam<span class="arr"></span>
+                </th>
+                <th>Jenis Arsip</th>
+                <th onclick="sortBy('arsip')">
+                  No. Arsip<span class="arr"></span>
+                </th>
+                <th>Jenis Hak / Warkah</th>
+                <th onclick="sortBy('kecamatan')">
+                  Kecamatan<span class="arr"></span>
+                </th>
+                <th onclick="sortBy('desa')">
+                  Desa / Kelurahan<span class="arr"></span>
+                </th>
+                <th>Keperluan</th>
+                <th onclick="sortBy('tgl')">
+                  Tgl. Pinjam<span class="arr"></span>
+                </th>
+                <th>Batas Kembali</th>
+                <th>Tgl. Kembali</th>
+                <th>Status</th>
+                <th>Keterangan</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="data-tbody"></tbody>
+          </table>
+        </div>
+        <div class="tfoot">
+          <span class="tfoot-info" id="pg-info">Menampilkan 0 data</span>
+          <div class="pgbtns" id="pg-btns"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB CHART -->
+    <div id="tab-chart" class="tab-panel">
+      <div class="scard">
+        <div class="shead">
+          <div class="shead-l">
+            <div class="shi">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zM16.2 13h2.8v6h-2.8v-6z"
+                />
+              </svg>
+            </div>
+            <h2>Statistik Peminjaman</h2>
+          </div>
+        </div>
+        <div class="chart-grid" id="chart-area">
+          <div
+            style="
+              grid-column: 1/-1;
+              text-align: center;
+              padding: 2rem;
+              color: var(--color-text-secondary);
+              font-size: 13px;
+            "
+          >
+            Tambahkan data peminjaman untuk melihat statistik
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB LOG -->
+    <div id="tab-log" class="tab-panel">
+      <div class="scard">
+        <div class="shead">
+          <div class="shead-l">
+            <div class="shi">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
+                />
+              </svg>
+            </div>
+            <h2>Riwayat Aktivitas</h2>
+          </div>
+          <button class="btn-dng" onclick="clearLog()">Hapus Riwayat</button>
+        </div>
+        <div id="log-list">
+          <div class="log-empty">Belum ada aktivitas</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script>
-    function updateDateTime() {
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
-      const timeStr = now.toLocaleTimeString('id-ID');
-      document.getElementById('current-date').textContent = dateStr;
-      document.getElementById('current-time').textContent = timeStr;
+  <!-- MODAL -->
+  <div class="mbg" id="mbg">
+    <div class="modal">
+      <div class="modal-hdr">
+        <div class="mhico" id="mhico">
+          <svg id="mhico-svg" viewBox="0 0 24 24"></svg>
+        </div>
+        <h3 id="mtitle"></h3>
+      </div>
+      <div class="modal-body">
+        <p id="mmsg"></p>
+        <div id="mextra"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="mcancel" onclick="closeModal()">Batal</button>
+        <button class="mok" id="mok">Konfirmasi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24">
+      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg
+    ><span id="toast-msg"></span>
+  </div>
+</div>
+
+<!-- COPYRIGHT FOOTER -->
+<div class="copyright">
+  © KKNP-PTLP STPN 2026 Angkatan 32 • Sistem Informasi Manajemen Arsip Terpadu
+</div>
+
+<script>
+  let data = [],
+    log = [],
+    page = 1,
+    perPage = 8,
+    sKey = "",
+    sDir = 1;
+  let jenisArsipAktif = "Sertipikat";
+
+  function saveData() {
+    localStorage.setItem("simaru_data", JSON.stringify(data));
+    localStorage.setItem("simaru_log", JSON.stringify(log));
+  }
+  function loadData() {
+    try {
+      let d = localStorage.getItem("simaru_data"),
+        l = localStorage.getItem("simaru_log");
+      data = d ? JSON.parse(d) : [];
+      log = l ? JSON.parse(l) : [];
+    } catch (e) {
+      data = [];
+      log = [];
     }
-    
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-  </script>
-</body>
-</html>
+  }
+
+  (function () {
+    let d = new Date();
+    let bln = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mei",
+      "Jun",
+      "Jul",
+      "Agu",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des",
+    ];
+    let hr = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    document.getElementById("hd-tgl").textContent =
+      hr[d.getDay()] +
+      ", " +
+      d.getDate() +
+      " " +
+      bln[d.getMonth()] +
+      " " +
+      d.getFullYear();
+    document.getElementById("hd-jam").textContent =
+      d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) +
+      " WIB";
+  })();
+
+  function pilihJenisArsip(jenis) {
+    jenisArsipAktif = jenis;
+    document
+      .getElementById("jap-sertipikat")
+      .classList.toggle("selected", jenis === "Sertipikat");
+    document
+      .getElementById("jap-warkah")
+      .classList.toggle("selected", jenis === "Warkah");
+    document.getElementById("form-sertipikat").style.display =
+      jenis === "Sertipikat" ? "block" : "none";
+    document.getElementById("form-warkah").style.display =
+      jenis === "Warkah" ? "block" : "none";
+  }
+
+  function switchTab(id, btn) {
+    document
+      .querySelectorAll(".tab-panel")
+      .forEach((p) => p.classList.remove("on"));
+    document.querySelectorAll(".tbtn").forEach((b) => b.classList.remove("on"));
+    document.getElementById("tab-" + id).classList.add("on");
+    btn.classList.add("on");
+    if (id === "chart") renderChart();
+    if (id === "data") render();
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    clearTimeout(toastTimer);
+    let t = document.getElementById("toast");
+    document.getElementById("toast-msg").textContent = msg;
+    t.classList.add("show");
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  function addLog(type, msg) {
+    log.unshift({ type, msg, time: new Date() });
+    if (log.length > 100) log.pop();
+    saveData();
+    renderLog();
+  }
+  function renderLog() {
+    let el = document.getElementById("log-list");
+    if (!log.length) {
+      el.innerHTML = '<div class="log-empty">Belum ada aktivitas</div>';
+      return;
+    }
+    el.innerHTML = log
+      .map((l) => {
+        let cls =
+          { p: "ld-p", k: "ld-k", h: "ld-h", e: "ld-e" }[l.type] || "ld-p";
+        return `<div class="log-item"><span class="ldot ${cls}"></span><div><div class="lmsg">${
+          l.msg
+        }</div><div class="ltime">${new Date(l.time).toLocaleString(
+          "id-ID"
+        )}</div></div></div>`;
+      })
+      .join("");
+  }
+  function clearLog() {
+    log = [];
+    saveData();
+    renderLog();
+    toast("Riwayat dihapus");
+  }
+
+  function pinjam() {
+    let isW = jenisArsipAktif === "Warkah";
+    let nama = document.getElementById(isW ? "w-nama" : "f-nama").value.trim();
+    let arsip = document
+      .getElementById(isW ? "w-nomor" : "f-arsip")
+      .value.trim();
+    if (!nama || !arsip) {
+      toast("Nama dan nomor arsip wajib diisi!");
+      return;
+    }
+    let batas =
+      parseInt(document.getElementById(isW ? "w-batas" : "f-batas").value) || 7;
+    let tgl = new Date(),
+      tglBatas = new Date(tgl);
+    tglBatas.setDate(tglBatas.getDate() + batas);
+    let obj = {
+      jenisArsip: jenisArsipAktif,
+      nama,
+      arsip,
+      jenis: isW ? "" : document.getElementById("f-jenis").value,
+      jenisWarkah: isW ? document.getElementById("w-jenis-warkah").value : "",
+      tahunWarkah: isW ? document.getElementById("w-tahun").value.trim() : "",
+      noBT: isW ? document.getElementById("w-bt").value.trim() : "",
+      kecamatan: document
+        .getElementById(isW ? "w-kecamatan" : "f-kecamatan")
+        .value.trim(),
+      desa: document.getElementById(isW ? "w-desa" : "f-desa").value.trim(),
+      keperluan: document
+        .getElementById(isW ? "w-keperluan" : "f-keperluan")
+        .value.trim(),
+      telp: document.getElementById(isW ? "w-telp" : "f-telp").value.trim(),
+      petugas: document
+        .getElementById(isW ? "w-petugas" : "f-petugas")
+        .value.trim(),
+      catatan: document
+        .getElementById(isW ? "w-catatan" : "f-catatan")
+        .value.trim(),
+      batasHari: batas,
+      tgl,
+      tglBatas,
+      tglKembali: null,
+      status: "Dipinjam",
+      terlambat: false,
+    };
+    data.unshift(obj);
+    addLog("p", `Peminjaman ${jenisArsipAktif}: ${nama} — No. ${arsip}`);
+    resetForm();
+    page = 1;
+    render();
+    updateStats();
+    updateNotif();
+    toast("Peminjaman berhasil dicatat");
+    switchTab("data", document.querySelectorAll(".tbtn")[1]);
+  }
+
+  function resetForm() {
+    [
+      "f-nama",
+      "f-arsip",
+      "f-kecamatan",
+      "f-desa",
+      "f-keperluan",
+      "f-telp",
+      "f-petugas",
+      "f-catatan",
+    ].forEach((id) => {
+      let el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    [
+      "w-nama",
+      "w-nomor",
+      "w-kecamatan",
+      "w-desa",
+      "w-keperluan",
+      "w-telp",
+      "w-petugas",
+      "w-catatan",
+      "w-tahun",
+      "w-bt",
+    ].forEach((id) => {
+      let el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    let fj = document.getElementById("f-jenis");
+    if (fj) fj.value = "";
+    let wj = document.getElementById("w-jenis-warkah");
+    if (wj) wj.value = "";
+    let fb = document.getElementById("f-batas");
+    if (fb) fb.value = "7";
+    let wb = document.getElementById("w-batas");
+    if (wb) wb.value = "7";
+  }
+
+  function jBadge(j) {
+    if (!j)
+      return '<span style="color:var(--color-text-secondary);font-size:11px">—</span>';
+    let m = {
+      HM: "b-hm",
+      HGB: "b-hgb",
+      HP: "b-hp",
+      HGU: "b-hgu",
+      HPL: "b-hpl",
+      HMSRS: "b-hmsrs",
+      HW: "b-hw",
+    };
+    return `<span class="badge ${m[j] || "b-lain"}">${j}</span>`;
+  }
+  function jarsipBadge(j) {
+    if (j === "Warkah")
+      return '<span class="badge b-warkah"><svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:#5a3e00;margin-right:2px"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Warkah</span>';
+    return '<span class="badge b-sert"><svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:#1a3a5c;margin-right:2px"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>Sertipikat</span>';
+  }
+
+  function showModal(cfg) {
+    let icons = {
+      g: '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>',
+      r: '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>',
+      b: '<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>',
+      a: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>',
+    };
+    let cls = {
+      g: "mhico mi-g",
+      r: "mhico mi-r",
+      b: "mhico mi-b",
+      a: "mhico mi-a",
+    };
+    document.getElementById("mhico").className = cls[cfg.type] || cls.g;
+    document.getElementById("mhico-svg").innerHTML = icons[cfg.type] || icons.g;
+    document.getElementById("mtitle").textContent = cfg.title;
+    let mp = document.getElementById("mmsg");
+    mp.textContent = cfg.msg || "";
+    mp.style.display = cfg.msg ? "block" : "none";
+    document.getElementById("mextra").innerHTML = cfg.extra || "";
+    let ok = document.getElementById("mok");
+    ok.className =
+      "mok " + (cfg.type === "r" ? "r" : cfg.type === "b" ? "b" : "g");
+    ok.textContent = cfg.okLabel || "Konfirmasi";
+    ok.onclick = () => {
+      cfg.cb();
+      closeModal();
+    };
+    document.getElementById("mbg").classList.add("show");
+  }
+  function closeModal() {
+    document.getElementById("mbg").classList.remove("show");
+    document.getElementById("mextra").innerHTML = "";
+  }
+
+  function konfirmasiKembali(i) {
+    let d = data[i];
+    showModal({
+      type: "g",
+      title: "Konfirmasi Pengembalian",
+      msg: `Kembalikan ${d.jenisArsip} No. ${d.arsip} atas nama ${d.nama}?`,
+      okLabel: "Kembalikan",
+      cb: () => {
+        let now = new Date(),
+          sel = Math.floor((now - new Date(d.tgl)) / 864e5);
+        d.tglKembali = now;
+        d.status = "Dikembalikan";
+        d.terlambat = sel > d.batasHari;
+        addLog(
+          "k",
+          `Dikembalikan: ${d.nama} — ${d.jenisArsip} No. ${d.arsip} (${
+            d.terlambat ? "Terlambat" : "Tepat Waktu"
+          })`
+        );
+        render();
+        updateStats();
+        updateNotif();
+        toast("Arsip berhasil dikembalikan");
+      },
+    });
+  }
+  function hapus(i) {
+    let d = data[i];
+    showModal({
+      type: "r",
+      title: "Hapus Data",
+      msg: `Hapus ${d.jenisArsip} No. ${d.arsip} atas nama ${d.nama}?`,
+      okLabel: "Hapus",
+      cb: () => {
+        addLog("h", `Dihapus: ${d.nama} — ${d.jenisArsip} No. ${d.arsip}`);
+        data.splice(i, 1);
+        saveData();
+        render();
+        updateStats();
+        updateNotif();
+        toast("Data berhasil dihapus");
+      },
+    });
+  }
+  function editData(i) {
+    let d = data[i];
+    let isW = d.jenisArsip === "Warkah";
+    showModal({
+      type: "b",
+      title: "Edit Data Peminjaman",
+      msg: "",
+      okLabel: "Simpan",
+      extra: `<div class="egrid">
+      <div class="fg"><label>Nama</label><input id="e-nama" value="${
+        d.nama
+      }"></div>
+      <div class="fg"><label>No. ${
+        d.jenisArsip
+      }</label><input id="e-arsip" value="${d.arsip}"></div>
+      ${
+        isW
+          ? `<div class="fg"><label>Jenis Warkah</label><input id="e-jw" value="${
+              d.jenisWarkah || ""
+            }"></div><div class="fg"><label>Tahun Warkah</label><input id="e-tw" value="${
+              d.tahunWarkah || ""
+            }"></div><div class="fg"><label>No. BT</label><input id="e-bt" value="${
+              d.noBT || ""
+            }"></div>`
+          : `<div class="fg"><label>Jenis Hak</label><select id="e-jenis"><option value="">--</option><option value="HM"${
+              d.jenis === "HM" ? " selected" : ""
+            }>HM</option><option value="HGB"${
+              d.jenis === "HGB" ? " selected" : ""
+            }>HGB</option><option value="HP"${
+              d.jenis === "HP" ? " selected" : ""
+            }>HP</option><option value="HGU"${
+              d.jenis === "HGU" ? " selected" : ""
+            }>HGU</option><option value="HPL"${
+              d.jenis === "HPL" ? " selected" : ""
+            }>HPL</option><option value="HMSRS"${
+              d.jenis === "HMSRS" ? " selected" : ""
+            }>HMSRS</option><option value="HW"${
+              d.jenis === "HW" ? " selected" : ""
+            }>HW</option></select></div>`
+      }
+      <div class="fg"><label>Kecamatan</label><input id="e-kec" value="${
+        d.kecamatan || ""
+      }"></div>
+      <div class="fg"><label>Desa</label><input id="e-desa" value="${
+        d.desa || ""
+      }"></div>
+      <div class="fg"><label>Keperluan</label><input id="e-kep" value="${
+        d.keperluan || ""
+      }"></div>
+      <div class="fg"><label>Telepon</label><input id="e-telp" value="${
+        d.telp || ""
+      }"></div>
+      <div class="fg"><label>Petugas</label><input id="e-pet" value="${
+        d.petugas || ""
+      }"></div>
+      <div class="fg full"><label>Catatan</label><textarea id="e-cat" style="height:44px">${
+        d.catatan || ""
+      }</textarea></div>
+    </div>`,
+      cb: () => {
+        d.nama = document.getElementById("e-nama").value.trim() || d.nama;
+        d.arsip = document.getElementById("e-arsip").value.trim() || d.arsip;
+        if (isW) {
+          let ej = document.getElementById("e-jw");
+          if (ej) d.jenisWarkah = ej.value.trim();
+          let et = document.getElementById("e-tw");
+          if (et) d.tahunWarkah = et.value.trim();
+          let eb = document.getElementById("e-bt");
+          if (eb) d.noBT = eb.value.trim();
+        } else {
+          let ej = document.getElementById("e-jenis");
+          if (ej) d.jenis = ej.value;
+        }
+        d.kecamatan = document.getElementById("e-kec").value.trim();
+        d.desa = document.getElementById("e-desa").value.trim();
+        d.keperluan = document.getElementById("e-kep").value.trim();
+        d.telp = document.getElementById("e-telp").value.trim();
+        d.petugas = document.getElementById("e-pet").value.trim();
+        d.catatan = document.getElementById("e-cat").value.trim();
+        addLog("e", `Diperbarui: ${d.nama} — ${d.jenisArsip} No. ${d.arsip}`);
+        saveData();
+        render();
+        toast("Data berhasil diperbarui");
+      },
+    });
+  }
+  function lihatDetail(i) {
+    let d = data[i];
+    let f = (v) =>
+      v
+        ? new Date(v).toLocaleDateString("id-ID", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          })
+        : "—";
+    let sel = Math.floor((new Date() - new Date(d.tgl)) / 864e5),
+      sisa = Math.ceil((new Date(d.tglBatas) - new Date()) / 864e5);
+    let rows = [
+      ["Jenis Arsip", jarsipBadge(d.jenisArsip)],
+      ["Nama Peminjam", `<strong>${d.nama}</strong>`],
+      ["No. Arsip", `<span class="mono">${d.arsip}</span>`],
+      d.jenisArsip === "Sertipikat"
+        ? ["Jenis Hak", jBadge(d.jenis)]
+        : ["Jenis Warkah", d.jenisWarkah || "—"],
+      ...(d.jenisArsip === "Warkah"
+        ? [
+            ["Tahun Warkah", d.tahunWarkah || "—"],
+            ["No. BT", d.noBT || "—"],
+          ]
+        : []),
+      ["Kecamatan", d.kecamatan || "—"],
+      ["Desa / Kelurahan", d.desa || "—"],
+      ["Keperluan", d.keperluan || "—"],
+      ["No. Telepon", d.telp || "—"],
+      ["Petugas", d.petugas || "—"],
+      ["Tanggal Pinjam", f(d.tgl)],
+      ["Batas Kembali", f(d.tglBatas) + ` (${d.batasHari} hari)`],
+      [
+        "Tanggal Kembali",
+        d.tglKembali ? f(d.tglKembali) : "Belum dikembalikan",
+      ],
+      [
+        "Status",
+        d.status === "Dipinjam"
+          ? `<span class="badge b-pinjam">Dipinjam</span>`
+          : `<span class="badge b-kembali">Dikembalikan</span>`,
+      ],
+      ["Catatan", d.catatan || "—"],
+    ]
+      .map(
+        ([l, v]) =>
+          `<div class="det-row"><div class="dl">${l}</div><div class="dv">${v}</div></div>`
+      )
+      .join("");
+    showModal({
+      type: "a",
+      title: "Detail Peminjaman Arsip",
+      msg: "",
+      extra: `<div>${rows}</div>`,
+      okLabel: "Tutup",
+      cb: () => {},
+    });
+  }
+
+  function sortBy(k) {
+    if (sKey === k) sDir *= -1;
+    else {
+      sKey = k;
+      sDir = 1;
+    }
+    document.querySelectorAll("thead th").forEach((th) => {
+      th.classList.remove("asc", "desc");
+    });
+    let map = { nama: 1, arsip: 3, kecamatan: 5, desa: 6, tgl: 8 };
+    let ths = document.querySelectorAll("thead th");
+    if (map[k] !== undefined)
+      ths[map[k]].classList.add(sDir === 1 ? "asc" : "desc");
+    render();
+  }
+  function fmt(d) {
+    return new Date(d).toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  }
+
+  function updateStats() {
+    let st = data.length,
+      sp = 0,
+      sk = 0,
+      sl = 0;
+    data.forEach((d) => {
+      if (d.status === "Dipinjam") sp++;
+      else sk++;
+      let sel = Math.floor((new Date() - new Date(d.tgl)) / 864e5);
+      if (d.status === "Dipinjam" && sel > d.batasHari) sl++;
+      if (d.status === "Dikembalikan" && d.terlambat) sl++;
+    });
+    document.getElementById("s-total").textContent = st;
+    document.getElementById("s-pinjam").textContent = sp;
+    document.getElementById("s-kembali").textContent = sk;
+    document.getElementById("s-telat").textContent = sl;
+  }
+  function updateNotif() {
+    let telat = data.filter((d) => {
+      let s = Math.floor((new Date() - new Date(d.tgl)) / 864e5);
+      return d.status === "Dipinjam" && s > d.batasHari;
+    });
+    let hampir = data.filter((d) => {
+      let s = Math.ceil((new Date(d.tglBatas) - new Date()) / 864e5);
+      return d.status === "Dipinjam" && s >= 0 && s <= 2;
+    });
+    let b = document.getElementById("notif-bar");
+    if (telat.length || hampir.length) {
+      let pts = [];
+      if (telat.length)
+        pts.push(`${telat.length} arsip terlambat dikembalikan`);
+      if (hampir.length)
+        pts.push(`${hampir.length} arsip jatuh tempo dalam 2 hari`);
+      document.getElementById("notif-msg").textContent = pts.join(" · ");
+      b.classList.add("show");
+    } else b.classList.remove("show");
+  }
+
+  function render() {
+    let q = document.getElementById("cari").value.toLowerCase();
+    let fs = document.getElementById("fstatus").value;
+    let fj = document.getElementById("fjenis").value;
+    let fja = document.getElementById("f-jarsip").value;
+    let filtered = data
+      .map((d, i) => ({ ...d, _i: i }))
+      .filter(
+        (d) =>
+          (!fs || d.status === fs) &&
+          (!fj || d.jenis === fj) &&
+          (!fja || d.jenisArsip === fja) &&
+          (d.nama.toLowerCase().includes(q) ||
+            d.arsip.toLowerCase().includes(q) ||
+            (d.desa || "").toLowerCase().includes(q) ||
+            (d.kecamatan || "").toLowerCase().includes(q) ||
+            (d.keperluan || "").toLowerCase().includes(q))
+      );
+    if (sKey)
+      filtered.sort((a, b) => {
+        let av = sKey === "tgl" ? new Date(a.tgl) : a[sKey] || "",
+          bv = sKey === "tgl" ? new Date(b.tgl) : b[sKey] || "";
+        return av < bv ? -sDir : av > bv ? sDir : 0;
+      });
+    let tot = filtered.length,
+      tp = Math.max(1, Math.ceil(tot / perPage));
+    if (page > tp) page = tp;
+    let slice = filtered.slice((page - 1) * perPage, page * perPage);
+    let html = "";
+    if (!slice.length) {
+      html = `<tr><td colspan="14"><div class="empty"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>Belum ada data peminjaman</div></td></tr>`;
+    } else {
+      slice.forEach((d, idx) => {
+        let now = new Date(),
+          sel = Math.floor((now - new Date(d.tgl)) / 864e5),
+          sisa = Math.ceil((new Date(d.tglBatas) - now) / 864e5);
+        let notif = "",
+          ket = "";
+        if (d.status === "Dipinjam") {
+          if (sel > d.batasHari)
+            notif = `<span class="badge b-telat"><span class="dot dr"></span>Terlambat ${
+              sel - d.batasHari
+            }h</span>`;
+          else if (sisa <= 2)
+            notif = `<span class="badge b-warn">Jatuh tempo ${Math.max(
+              0,
+              sisa
+            )}h</span>`;
+          else
+            notif = `<span class="badge b-sisa"><span class="dot db"></span>Sisa ${sisa}h</span>`;
+        }
+        if (d.status === "Dikembalikan")
+          ket = d.terlambat
+            ? `<span class="badge b-telat">Terlambat</span>`
+            : `<span class="badge b-tepat"><span class="dot dg"></span>Tepat Waktu</span>`;
+        let sb =
+          d.status === "Dipinjam"
+            ? `<span class="badge b-pinjam">Dipinjam</span>`
+            : `<span class="badge b-kembali">Dikembalikan</span>`;
+        let jenisInfo =
+          d.jenisArsip === "Warkah"
+            ? d.jenisWarkah
+              ? `<span style="font-size:11px;color:var(--color-text-secondary)">${d.jenisWarkah}</span>`
+              : '<span style="color:var(--color-text-secondary)">—</span>'
+            : jBadge(d.jenis);
+        let no = (page - 1) * perPage + idx + 1;
+        html += `<tr title="${d.catatan ? "Catatan: " + d.catatan : ""}">
+        <td style="text-align:center;color:var(--color-text-secondary);font-size:11px">${no}</td>
+        <td><div style="font-weight:500;font-size:13px">${d.nama}</div>${
+          d.petugas
+            ? `<div style="font-size:10px;color:var(--color-text-secondary)">Petugas: ${d.petugas}</div>`
+            : ""
+        }</td>
+        <td>${jarsipBadge(d.jenisArsip)}</td>
+        <td><span class="mono">${d.arsip}</span>${
+          d.jenisArsip === "Warkah" && d.tahunWarkah
+            ? `<div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">Tahun: ${d.tahunWarkah}</div>`
+            : ""
+        }</td>
+        <td>${jenisInfo}</td>
+        <td style="font-size:12px">${
+          d.kecamatan ||
+          '<span style="color:var(--color-text-secondary)">—</span>'
+        }</td>
+        <td style="font-size:12px;color:var(--color-text-secondary)">${
+          d.desa || "—"
+        }</td>
+        <td style="font-size:11px;color:var(--color-text-secondary)">${
+          d.keperluan || "—"
+        }</td>
+        <td><div class="dcell">${fmt(d.tgl)}</div></td>
+        <td><div class="dcell">${fmt(d.tglBatas)}</div><div class="dsub">${
+          d.batasHari
+        }h</div></td>
+        <td><div class="dcell">${
+          d.tglKembali
+            ? fmt(d.tglKembali)
+            : '<span style="color:var(--color-text-secondary)">—</span>'
+        }</div></td>
+        <td>${sb}</td><td>${ket || notif}</td>
+        <td>
+          <div class="act-btns">
+            ${
+              d.status === "Dipinjam"
+                ? `<button class="ab ab-k" onclick="konfirmasiKembali(${d._i})">Kembalikan</button>`
+                : ""
+            }
+            <button class="ab ab-d" onclick="lihatDetail(${
+              d._i
+            })"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></button>
+            <button class="ab ab-e" onclick="editData(${
+              d._i
+            })"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
+            <button class="ab ab-h" onclick="hapus(${
+              d._i
+            })"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+          </div>
+        </td>
+      </tr>`;
+      });
+    }
+    document.getElementById("data-tbody").innerHTML = html;
+    document.getElementById(
+      "pg-info"
+    ).textContent = `Menampilkan ${slice.length} dari ${tot} data`;
+    let ph = "";
+    for (let p = 1; p <= tp; p++)
+      ph += `<button class="pgb${
+        p === page ? " on" : ""
+      }" onclick="goPage(${p})">${p}</button>`;
+    document.getElementById("pg-btns").innerHTML = ph;
+  }
+  function goPage(p) {
+    page = p;
+    render();
+  }
+
+  function renderChart() {
+    if (!data.length) {
+      document.getElementById("chart-area").innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:13px">Tambahkan data untuk melihat statistik</div>';
+      return;
+    }
+    let byJA = { Sertipikat: 0, Warkah: 0 },
+      byJ = {},
+      bySt = { Dipinjam: 0, Dikembalikan: 0, Terlambat: 0 },
+      byK = {};
+    data.forEach((d) => {
+      byJA[d.jenisArsip] = (byJA[d.jenisArsip] || 0) + 1;
+      if (d.jenisArsip === "Sertipikat") {
+        let j = d.jenis || "Tidak diisi";
+        byJ[j] = (byJ[j] || 0) + 1;
+      }
+      let sel = Math.floor((new Date() - new Date(d.tgl)) / 864e5);
+      if (d.status === "Dipinjam" && sel > d.batasHari) bySt.Terlambat++;
+      else bySt[d.status] = (bySt[d.status] || 0) + 1;
+      let k = d.keperluan || "Tidak diisi";
+      byK[k] = (byK[k] || 0) + 1;
+    });
+    let cJ = {
+      HM: "#7f77dd",
+      HGB: "#1d9e75",
+      HP: "#ba7517",
+      HGU: "#d85a30",
+      HPL: "#d4537e",
+      HMSRS: "#0b7abf",
+      HW: "#5a8a12",
+      "Tidak diisi": "#aaa",
+    };
+    let cSt = {
+      Dipinjam: "#185fa5",
+      Dikembalikan: "#3b6d11",
+      Terlambat: "#e24b4a",
+    };
+    let cPal = [
+      "#1a3a5c",
+      "#2563a8",
+      "#0f6e56",
+      "#854f0b",
+      "#a32d2d",
+      "#534ab7",
+    ];
+    let mkBars = (obj, clrMap, pal) =>
+      Object.entries(obj)
+        .sort((a, b) => b[1] - a[1])
+        .map(([k, v], i) => {
+          let c = clrMap && clrMap[k] ? clrMap[k] : pal[i % pal.length];
+          let mx = Math.max(...Object.values(obj));
+          return `<div class="brow"><div class="blbl" style="font-size:10px">${k}</div><div class="btrk"><div class="bfill" style="width:${Math.round(
+            (v / mx) * 100
+          )}%;background:${c}">${v}</div></div></div>`;
+        })
+        .join("");
+    let jaBar = `<div class="brow"><div class="blbl">Sertipikat</div><div class="btrk"><div class="bfill" style="width:${Math.round(
+      (byJA.Sertipikat / Math.max(1, ...Object.values(byJA))) * 100
+    )}%;background:#1a3a5c">${
+      byJA.Sertipikat
+    }</div></div></div><div class="brow"><div class="blbl">Warkah</div><div class="btrk"><div class="bfill" style="width:${Math.round(
+      (byJA.Warkah / Math.max(1, ...Object.values(byJA))) * 100
+    )}%;background:#ba7517">${byJA.Warkah}</div></div></div>`;
+    document.getElementById("chart-area").innerHTML = `
+    <div class="cbox"><div class="ctitle">Jenis Arsip</div>${jaBar}</div>
+    <div class="cbox"><div class="ctitle">Status Peminjaman</div>${mkBars(
+      bySt,
+      cSt,
+      cPal
+    )}</div>
+    <div class="cbox"><div class="ctitle">Jenis Hak (Sertipikat)</div>${
+      Object.keys(byJ).length
+        ? mkBars(byJ, cJ, cPal)
+        : '<div style="font-size:12px;color:var(--color-text-secondary)">Tidak ada sertipikat</div>'
+    }</div>
+    <div class="cbox"><div class="ctitle">Keperluan Peminjaman</div>${
+      Object.keys(byK).length
+        ? mkBars(byK, null, cPal)
+        : '<div style="font-size:12px;color:var(--color-text-secondary)">—</div>'
+    }</div>
+  `;
+  }
+
+  function exportCSV() {
+    if (!data.length) {
+      toast("Tidak ada data untuk diekspor");
+      return;
+    }
+    let hdr = [
+      "No",
+      "Jenis Arsip",
+      "Nama",
+      "No Arsip",
+      "Jenis Hak/Warkah",
+      "Tahun Warkah",
+      "No BT",
+      "Kecamatan",
+      "Desa",
+      "Keperluan",
+      "Telepon",
+      "Petugas",
+      "Tgl Pinjam",
+      "Batas Kembali",
+      "Tgl Kembali",
+      "Status",
+      "Keterangan",
+      "Catatan",
+    ];
+    let rows = data.map((d, i) => {
+      let sel = Math.floor((new Date() - new Date(d.tgl)) / 864e5);
+      let ket =
+        d.status === "Dikembalikan"
+          ? d.terlambat
+            ? "Terlambat"
+            : "Tepat Waktu"
+          : sel > d.batasHari
+          ? "Terlambat"
+          : "On Track";
+      return [
+        i + 1,
+        d.jenisArsip,
+        d.nama,
+        d.arsip,
+        d.jenisArsip === "Warkah" ? d.jenisWarkah || "" : d.jenis || "",
+        d.tahunWarkah || "",
+        d.noBT || "",
+        d.kecamatan || "",
+        d.desa || "",
+        d.keperluan || "",
+        d.telp || "",
+        d.petugas || "",
+        fmt(d.tgl),
+        fmt(d.tglBatas),
+        d.tglKembali ? fmt(d.tglKembali) : "",
+        d.status,
+        ket,
+        d.catatan || "",
+      ]
+        .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+        .join(",");
+    });
+    let csv = [hdr.join(","), ...rows].join("\n");
+    let a = document.createElement("a");
+    a.href = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csv);
+    a.download = "SIMARU-" + new Date().toISOString().slice(0, 10) + ".csv";
+    a.click();
+    addLog("e", "Export CSV — " + data.length + " data");
+    toast("CSV berhasil diunduh");
+  }
+
+  function cetakLaporan() {
+    if (!data.length) {
+      toast("Tidak ada data untuk dicetak");
+      return;
+    }
+    let rows = data
+      .map(
+        (d, i) =>
+          `<tr><td>${i + 1}</td><td>${d.jenisArsip}</td><td>${d.nama}</td><td>${
+            d.arsip
+          }</td><td>${
+            d.jenisArsip === "Warkah" ? d.jenisWarkah || "—" : d.jenis || "—"
+          }</td><td>${d.kecamatan || "—"}</td><td>${d.desa || "—"}</td><td>${
+            d.keperluan || "—"
+          }</td><td>${fmt(d.tgl)}</td><td>${fmt(d.tglBatas)}</td><td>${
+            d.tglKembali ? fmt(d.tglKembali) : "—"
+          }</td><td>${d.status}</td></tr>`
+      )
+      .join("");
+    let w = window.open("", "_blank");
+    if (!w) {
+      toast("Popup diblokir browser");
+      return;
+    }
+    w.document.write(
+      `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Laporan SIMARU</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:11px;padding:24px;color:#222}.hdr{border-bottom:2px solid #1a3a5c;padding-bottom:10px;margin-bottom:16px}.hdr h2{color:#1a3a5c;font-size:14px;font-weight:600;margin-bottom:3px}.hdr p{color:#666;font-size:10px}table{width:100%;border-collapse:collapse}th{background:#1a3a5c;color:#fff;padding:6px 8px;font-size:10px;text-align:left}td{padding:5px 8px;border-bottom:1px solid #eee}tr:nth-child(even) td{background:#f9f9f9}.foot{margin-top:10px;font-size:10px;color:#888;border-top:1px solid #eee;padding-top:8px}</style></head><body><div class="hdr"><h2>Laporan Peminjaman Arsip — SIMARU</h2><p>Kantor Pertanahan Kabupaten Temanggung &nbsp;|&nbsp; Dicetak: ${new Date().toLocaleString(
+        "id-ID"
+      )}</p></div><table><thead><tr><th>#</th><th>Jenis Arsip</th><th>Nama</th><th>No. Arsip</th><th>Jenis Hak/Warkah</th><th>Kecamatan</th><th>Desa</th><th>Keperluan</th><th>Tgl Pinjam</th><th>Batas Kembali</th><th>Tgl Kembali</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table><div class="foot">Total: ${
+        data.length
+      } &nbsp;·&nbsp; Sertipikat: ${
+        data.filter((d) => d.jenisArsip === "Sertipikat").length
+      } &nbsp;·&nbsp; Warkah: ${
+        data.filter((d) => d.jenisArsip === "Warkah").length
+      } &nbsp;·&nbsp; Dipinjam: ${
+        data.filter((d) => d.status === "Dipinjam").length
+      } &nbsp;·&nbsp; Dikembalikan: ${
+        data.filter((d) => d.status === "Dikembalikan").length
+      }</div><script>window.print();<\/script></body></html>`
+    );
+    w.document.close();
+    toast("Halaman cetak dibuka");
+  }
+
+  loadData();
+  render();
+  updateStats();
+  updateNotif();
+</script>
